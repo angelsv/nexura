@@ -26,7 +26,13 @@ cd nexura
 
 ## Configuración inicial
 
-Requiere [composer](https://getcomposer.org)
+Requiere:
+
+- [composer](https://getcomposer.org)
+- [mysql](https://dev.mysql.com)
+- [apache](https://apache.org/)
+
+Procesos previos al arranque:
 
 ```bash
 # Instalar dependencias
@@ -34,7 +40,6 @@ composer install
 ```
 
 Instale la base de datos
-Requiere [mysql](https://dev.mysql.com)
 
 ```bash
 # Instalación de la base de datos
@@ -44,7 +49,7 @@ mysql -u [user] -p -h [localhost] < database/initial_script.sql
 Cambiar los **parámetros de conexión** para su entorno:
 
 ```bash
-# Instalación de la base de datos
+# Edición del archivo con las variables
 nano .env
 ```
 
@@ -56,7 +61,12 @@ DB_USER='user_db'
 DB_PASSWORD='pass_db'
 ```
 
-Visualización:
+## Ejecución
 
 Inicie su servidor PHP y navegue hasta:
+
 [localhost/public](localhost/public)
+
+## Documentación relacionada
+
+[Prueba técnica](https://github.com/angelsv/nexura/blob/main/docs/pdf/Prueba%20tecnica%20-%20Dev%20PHP.pdf)
