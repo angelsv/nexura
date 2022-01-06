@@ -37,9 +37,9 @@
                         <tr>
                             <td>{{ employee.nombre }}</td>
                             <td>{{ employee.email }}</td>
-                            <td>{{ employee.sexo }}</td>
-                            <td>{{ employee.area_id }}</td>
-                            <td>{{ employee.boletin }}</td>
+                            <td>{% if employee.sexo=='M' %}Masculino{% else %}Femenino{% endif %}</td>
+                            <td>{{ employee.area.nombre }}</td>
+                            <td>{% if employee.boletin=='1' %}Si{% else %}No{% endif %}</td>
                             
                             <td class="text-center"><a href="/employee/{{ employee.id }}"><i class="bi bi-pencil-square"></i></a></td>
                             <td class="text-center"><a href="javascript:;" data-id="{{ employee.id }}"><i class="bi bi-trash-fill"></i></a></td>
