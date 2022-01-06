@@ -75,6 +75,27 @@ class EmployeeDao extends GetConnection
 
     /**
      * Editar antiguos
+     * TODO: imeplementar campo `active` para evitar eliminar el registro por completo de la DB
+     */
+    function delete(int $employeeId) : bool
+    {
+        $query = "DELETE FROM `{$this->table}` WHERE `id` = ?";
+        $stmt = $this->connection->prepare($query);
+        $stmt->bindParam(1, $employeeId);
+        $res = $stmt->execute();
+
+        // Si la foreign key está en cascada, NO se necesitaría eliminar los registros asociados
+        // Eliminación manual:
+        if($res !== false){
+            $rolesDao = new EmployeeRoleDao;
+            $rolesDao->deleteByEmployeeId((int)$employeeId);
+        }
+
+        return $res !== false;
+    }
+    
+    /**
+     * Editar antiguos
      */
     function update(Employee $employee) : array
     {
