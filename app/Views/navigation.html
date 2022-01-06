@@ -1,0 +1,21 @@
+{% extends "index.html" %}
+
+{% block title %}Bienvenid@{% endblock %}
+
+{% block head %}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    <p>&nbsp;</p>
+    <h1>Principal</h1>
+    <p class="important">
+        Prueba de selección <strong>Nexura</strong>. <small>Por Ángel Silva</small>
+    </p>
+    <p class="center">
+        <a href="/employee/new" class="btn btn-primary">Crear empleado</a>
+    </p>
+    <p class="center">
+        <a href="/employee" class="btn btn-primary">Lista de empleados</a>
+    </p>
+{% endblock %}
