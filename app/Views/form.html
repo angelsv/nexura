@@ -39,6 +39,8 @@
             <input type="hidden" name="employee[id]" value="{{ employee.id }}">
         {% endif %}
 
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
         <div class="row mb-3">
             <label for="name" class="col-sm-2 col-form-label">Nombre completo *</label>
             <div class="col-sm-10">

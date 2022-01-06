@@ -24,7 +24,7 @@ function deleteEmployee(id){
     $.ajax({
         type: "POST",
         url: `/employee/delete`,
-        data: {id: id},
+        data: {id: id, csrf_token: $('#csrf_token').val()},
         dataType: "json",
         success: function (response) {
             var icon = response.response ? 'success' : 'warning';
@@ -34,6 +34,7 @@ function deleteEmployee(id){
             });
             if(response.response){
                 $(`#row-${id}`).remove();
+                $(`#csrf_token`).val(response.csrf_token);
             }
         }
     });

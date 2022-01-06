@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 namespace App\Controllers;
+session_start();
 
 use App\Models\AreaDao;
 use App\Models\RoleDao;
@@ -33,7 +34,8 @@ class EmployeeController extends Controller
      * Cargar el formulario de creación/edición
      */
     function showForm(){
-        $this->template->twig->display('form.html', ['areas' => $this->areas, 'roles' => $this->roles, 'action' => '/employee']);
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(35));
+        $this->template->twig->display('form.html', ['areas' => $this->areas, 'roles' => $this->roles, 'action' => '/employee', 'csrf_token' => $_SESSION['csrf_token']]);
     }
 
     /**
@@ -42,6 +44,8 @@ class EmployeeController extends Controller
     function getAll($data = []){
         $employees = $this->employeeDao->getAll();
         $data['employees'] = $employees;
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(35));
+        $data['csrf_token'] = $_SESSION['csrf_token'];
         $this->template->twig->display('list.html', $data);
     }
     
@@ -56,7 +60,14 @@ class EmployeeController extends Controller
             echo 'error404';
             // exit;
         }
-        $this->template->twig->display('form.html', ['employee' => $employee, 'areas' => $this->areas, 'roles' => $this->roles, 'action' => "/employee/{$id}"]);
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(35));
+        $this->template->twig->display('form.html', [
+            'employee' => $employee,
+            'areas' => $this->areas,
+            'roles' => $this->roles,
+            'action' => "/employee/{$id}",
+            'csrf_token' => $_SESSION['csrf_token'],
+        ]);
     }
 
     /**
@@ -64,13 +75,30 @@ class EmployeeController extends Controller
      */
     function delete(){
         $id = filter_var(trim($_POST['id']), FILTER_SANITIZE_NUMBER_INT);
+        $token = filter_input(INPUT_POST, 'csrf_token', FILTER_SANITIZE_STRING);
+        $is_not_valid = $token !== $_SESSION['csrf_token'];
+
+        if( $is_not_valid ){
+            $response = [
+                'response' => false,
+                'msg' => 'Hay un error de seguridad, por favor recargue la página',
+            ];
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode($response);
+            return null;
+        }
+
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(35));
+
         $res = $this->employeeDao->delete((int)$id);
         $response = [
             'response' => $res,
             'msg' => $res ? 'Registro eliminado correctamente!' : 'Ocurrió un error eliminado el registro',
+            'csrf_token' => $_SESSION['csrf_token'],
         ];
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode($response);
+        return null;
     }
 
     /**
@@ -87,8 +115,13 @@ class EmployeeController extends Controller
         $newsletter = isset($_POST['employee']['boletin']) ? $_POST['employee']['boletin'] : '0';
         $newsletter = filter_var(trim($newsletter), FILTER_SANITIZE_NUMBER_INT);
 
+        $token = filter_input(INPUT_POST, 'csrf_token', FILTER_SANITIZE_STRING);
+
         // Validación de campos
         $errors = [];
+        if( $token !== $_SESSION['csrf_token'] ){
+            $errors[] = 'Hay un error de seguridad, por favor recargue la página';
+        }
         if( empty($name) ){
             $errors[] = 'El campo `nombre` es obligatorio';
         }
@@ -108,13 +141,22 @@ class EmployeeController extends Controller
             $errors[] = 'El campo `descripción` es obligatorio';
         }
 
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(35));
+
         if( count($errors) > 0 ){
             $response = [
                 'response' => false,
                 'msg' => 'Se encontraron errores en el formulario, por favor valide e intente nuevamente:',
                 'errors' => $errors,
             ];
-            $this->template->twig->display('form.html', ['employee' => $_POST['employee'] , 'response' => $response, 'areas' => $this->areas, 'roles' => $this->roles, 'action' => '/employee']);
+            $this->template->twig->display('form.html', [
+                'employee' => $_POST['employee'], 
+                'response' => $response, 
+                'areas' => $this->areas, 
+                'roles' => $this->roles, 
+                'action' => '/employee', 
+                'csrf_token' => $_SESSION['csrf_token'],
+            ]);
             return null;
         }
 
@@ -153,7 +195,14 @@ class EmployeeController extends Controller
         }
 
         if( $exists_user ){
-            $this->template->twig->display('form.html', ['employee' => $employee , 'response' => $response, 'areas' => $this->areas, 'roles' => $this->roles, 'action' => "/employee/{$id}"]);
+            $this->template->twig->display('form.html', [
+                'employee' => $employee,
+                'response' => $response,
+                'areas' => $this->areas,
+                'roles' => $this->roles,
+                'action' => "/employee/{$id}",
+                'csrf_token' => $_SESSION['csrf_token'],
+            ]);
         }else{
             $this->getAll(['response' => $response]);
         }
