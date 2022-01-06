@@ -1,0 +1,128 @@
+{% extends "index.html" %} 
+
+{% block title %}
+    Crear empleado
+{% endblock %}
+
+{% block head %} 
+    {{ parent() }} 
+{% endblock %} 
+
+{% block content %} 
+
+    <p>&nbsp;</p>
+
+    {% if response %}
+        <div class="alert alert-{% if response.response %}success{% else %}warning{% endif %}" role="alert">
+            {% if response.msg %}
+                {{ response.msg }}
+            {% endif %}
+            {% if response.errors %}
+            <ul>
+                {% for item in response.errors %}
+                    <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <h1>Crear empleado</h1>
+
+    <div class="alert alert-info">
+        Los campos con asterisco (*) son obligatorios
+    </div>
+
+    <form method="POST">
+
+        {% if employee.id %}
+            <input type="" name="employee[id]" value="{{ employee.id }}">
+        {% endif %}
+
+        <div class="row mb-3">
+            <label for="name" class="col-sm-2 col-form-label">Nombre completo *</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="employee[nombre]" id="name" required placeholder="Nombre completo del empleado" value="{{ employee.nombre }}">
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="email" class="col-sm-2 col-form-label">Correo electrónico *</label>
+            <div class="col-sm-10">
+                <input type="email" class="form-control" name="employee[email]" id="email" required placeholder="Correo electrónico" value="{{ employee.email }}">
+            </div>
+        </div>
+
+        <fieldset class="row mb-3">
+            <legend class="col-form-label col-sm-2 pt-0">Sexo *</legend>
+            <div class="col-sm-10">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="employee[sexo]" id="genderM" value="M" required {% if employee.sexo == 'M' %}checked{% endif %}>
+                    <label class="form-check-label" for="genderM">Masculino</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="employee[sexo]" id="genderF" value="F" required {% if employee.sexo == 'F' %}checked{% endif %}>
+                    <label class="form-check-label" for="genderF">Femenino</label>
+                </div>
+            </div>
+        </fieldset>
+
+        <div class="row mb-3">
+            <label for="area" class="col-sm-2 col-form-label">Área *</label>
+            <div class="col-sm-10">
+                <select id="area" name="employee[area_id]" class="form-select" aria-label="Área" required>
+                    <option value="" disabled selected>Seleccione una opción...</option>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="description" class="col-sm-2 col-form-label">Descripción *</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" id="description" name="employee[descripcion]" rows="3" placeholder="Descripción de la experiencia del empleado">{{ employee.descripcion }}</textarea>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="offset-md-2 col-sm-10">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="employee[boletin]" id="newsletter" value="1" {% if employee.boletin %}checked{% endif %}>
+                    <label class="form-check-label" for="newsletter">
+                        Deseo recibir boletín informativo
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <fieldset class="row mb-3">
+            <legend class="col-form-label col-sm-2 pt-0">Roles *</legend>
+            <div class="col-sm-10">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="employee[rol][]" value="1" required>
+                    <label class="form-check-label" for="role1">
+                        Profesional de proyectos
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="employee[rol][]" value="2" >
+                    <label class="form-check-label" for="role2">
+                        Gerente estratégico
+                    </label>
+                </div>
+            </div>
+        </fieldset>
+
+        <div class="row mb-3">
+            <div class="offset-md-2 col-sm-10">
+                <button type="submit" class="btn btn-primary">{% if employee.id %}Actualizar{% else %}Guardar{% endif %}</button>
+            </div>
+        </div>
+
+    </form>
+
+    <p>&nbsp;</p>
+
+{% endblock %}
