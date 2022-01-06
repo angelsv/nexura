@@ -14,20 +14,19 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
 
     // Crear
     $r->addRoute('GET', '/employee/new', 'App\Controllers\EmployeeController/showForm');
-    $r->addRoute('POST', '/employee/new', 'App\Controllers\EmployeeController/save');
+    $r->addRoute('POST', '/employee', 'App\Controllers\EmployeeController/save');
     // Editar
     $r->addRoute('GET', '/employee/{id:\d+}', 'App\Controllers\EmployeeController/getById');
     $r->addRoute('POST', '/employee/{id:\d+}', 'App\Controllers\EmployeeController/save');
+    // Eliminar
+    $r->addRoute('POST', '/employee/delete', 'App\Controllers\EmployeeController/delete');
 
     // Listar
     $r->addRoute('GET', '/employee', 'App\Controllers\EmployeeController/getAll');
-    // $r->addRoute('GET', '/users', 'App\Controllers\UsersController/getUsers');
-    // $r->addRoute('GET', '/users/upload', 'App\Controllers\ViewsController/showUsersUpload');
-    // $r->addRoute('POST', '/users/upload', 'App\Controllers\UsersController/uploadUsers');
-    // // {id} must be a number (\d+)
-    // $r->addRoute('GET', '/user/{id:\d+}', 'get_user_handler');
-    // // The /{title} suffix is optional
-    // $r->addRoute('GET', '/articles/{id:\d+}[/{title}]', 'get_article_handler');
+
+    // TODO: Implementar plantillas 404
+    // $r->addRoute('GET', '/404', 'App\Controllers\ViewsController/show404');
+
 });
 
 // Fetch method and URI from somewhere
