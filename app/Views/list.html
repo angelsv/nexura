@@ -35,7 +35,7 @@
         </p>
     </div>
 
-    <input type="" id="csrf_token" value="{{ csrf_token }}">
+    <input type="hidden" id="csrf_token" value="{{ csrf_token }}">
 
     {% if employees|length > 0 %}
     <div class="row">
