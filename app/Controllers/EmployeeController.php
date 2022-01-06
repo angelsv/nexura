@@ -3,17 +3,30 @@
 declare(strict_types=1);
 namespace App\Controllers;
 
+use App\Models\AreaDao;
+use App\Models\RoleDao;
 use App\Models\Employee;
 use App\Models\EmployeeDao;
 
 class EmployeeController extends Controller
 {
 
+    private $areas;
+    private $roles;
+
+    function __construct(){
+        parent::__construct();
+        $areaModel = new AreaDao;
+        $roleModel = new RoleDao;
+        $this->areas = $areaModel->getAll();
+        $this->roles = $roleModel->getAll();
+    }
+
     /**
      * Cargar el formulario de creación/edición
      */
     function showForm(){
-        $this->template->twig->display('form.html', array());
+        $this->template->twig->display('form.html', ['areas' => $this->areas, 'roles' => $this->roles]);
     }
 
     /**
@@ -37,7 +50,7 @@ class EmployeeController extends Controller
             echo 'error404';
             // exit;
         }
-        $this->template->twig->display('form.html', ['employee' => $employee]);
+        $this->template->twig->display('form.html', ['employee' => $employee, 'areas' => $this->areas, 'roles' => $this->roles]);
     }
 
     function save(){
@@ -47,8 +60,10 @@ class EmployeeController extends Controller
         $email = filter_var(trim($_POST['employee']['email']), FILTER_SANITIZE_EMAIL);
         $gender = filter_var(trim($_POST['employee']['sexo']), FILTER_SANITIZE_STRING);
         $area = filter_var(trim($_POST['employee']['area_id']), FILTER_SANITIZE_NUMBER_INT);
-        $description = filter_var(trim($_POST['employee']['descripcion']), FILTER_SANITIZE_NUMBER_INT);
-        $newsletter = filter_var(trim($_POST['employee']['boletin']), FILTER_SANITIZE_NUMBER_INT);
+        $description = filter_var(trim($_POST['employee']['descripcion']), FILTER_SANITIZE_STRING);
+
+        $newsletter = isset($_POST['employee']['boletin']) ? $_POST['employee']['boletin'] : '0';
+        $newsletter = filter_var(trim($newsletter), FILTER_SANITIZE_NUMBER_INT);
         // $role = $_POST['employee']['rol'];
 
         $employeeDto = new Employee;
@@ -75,7 +90,7 @@ class EmployeeController extends Controller
             ];
         }
 
-        $this->template->twig->display('form.html', ['employee' => $employee , 'response' => $response]);
+        $this->template->twig->display('form.html', ['employee' => $employee , 'response' => $response, 'areas' => $this->areas, 'roles' => $this->roles]);
 
     }
 
