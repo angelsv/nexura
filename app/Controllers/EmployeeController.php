@@ -7,6 +7,7 @@ use App\Models\AreaDao;
 use App\Models\RoleDao;
 use App\Models\Employee;
 use App\Models\EmployeeDao;
+use App\Models\EmployeeRoleDao;
 
 class EmployeeController extends Controller
 {
@@ -64,7 +65,6 @@ class EmployeeController extends Controller
 
         $newsletter = isset($_POST['employee']['boletin']) ? $_POST['employee']['boletin'] : '0';
         $newsletter = filter_var(trim($newsletter), FILTER_SANITIZE_NUMBER_INT);
-        // $role = $_POST['employee']['rol'];
 
         $employeeDto = new Employee;
         $employeeDto->setNombre($name);
@@ -75,6 +75,7 @@ class EmployeeController extends Controller
         $employeeDto->setDescripcion($description);
         // $employeeDto->setRole($role);
 
+        // Procesar creación/actualización
         if( isset($_POST['employee']['id']) && !empty($employeeDao->getById((int)$_POST['employee']['id'])) ){
             $employeeDto->setId((int)$_POST['employee']['id']);
             $employee = $employeeDao->update($employeeDto);
@@ -88,6 +89,13 @@ class EmployeeController extends Controller
                 'response' => !empty($employee),
                 'msg' => !empty($employee) ? 'Registro creado satisfactoriamente!' : 'Error creando el registro',
             ];
+        }
+
+        // Los roles sólo se gestionan cuando la creación/actualización fue exitosa
+        if( $response['response'] ){
+            $roles = $_POST['employee']['roles'];
+            $employeeRoleDao = new EmployeeRoleDao;
+            $employee['roles'] = $employeeRoleDao->insertRolesByEmployeeId((int)$_POST['employee']['id'], $roles);
         }
 
         $this->template->twig->display('form.html', ['employee' => $employee , 'response' => $response, 'areas' => $this->areas, 'roles' => $this->roles]);
