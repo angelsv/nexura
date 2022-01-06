@@ -3,6 +3,9 @@
 declare(strict_types=1);
 namespace App\Models;
 
+use App\Models\AreaDao;
+use App\Models\EmployeeRoleDao;
+
 class EmployeeDao
 {
     private $connection;
@@ -20,7 +23,14 @@ class EmployeeDao
     {
         $query = "SELECT * FROM `{$this->table}`";
         $result = $this->connection->query($query);
-        return $result->fetchAll();
+        $all = $result->fetchAll();
+        foreach ($all as $key => $item) {
+            $all[$key] = $this->addParamsToEmployee($item);
+        }
+        // echo '<pre>';
+        // print_r($all);
+        // exit;
+        return $all;
     }
 
     /**
@@ -32,7 +42,14 @@ class EmployeeDao
         $stmt = $this->connection->prepare($query);
         $stmt->bindParam(1, $id);
         $stmt->execute();
-        return $stmt->fetch();
+        $employee = $stmt->fetch();
+        if( $employee!==false ){
+            $employee = $this->addParamsToEmployee($employee);
+        }
+        // echo '<pre>';
+        // print_r($employee);
+        // exit;
+        return $employee;
     }
 
     /**
@@ -88,5 +105,37 @@ class EmployeeDao
         $stmt->execute();
 
         return $this->getById((int)$employee->getId());
+    }
+
+    /**
+     * Incluir roles del empleado
+     */
+    function addRolesToEmployee(array $employee) : array
+    {
+        if(!empty($employee['id'])){
+            $rolesDao = new EmployeeRoleDao;
+            $employee['roles'] = $rolesDao->getAllByEmployeeId((int)$employee['id']);
+        }
+        return $employee;
+    }
+    
+    /**
+     * Incluir área del empleado
+     */
+    function addAreaToEmployee(array $employee) : array
+    {
+        $areaDao = new AreaDao;
+        $employee['area'] = $areaDao->getById((int)$employee['area_id']);
+        return $employee;
+    }
+
+    /**
+     * Añadir los parámetros adicionales como arreglos para facilitar la lectura
+     */
+    function addParamsToEmployee(array $employee) : array
+    {
+        $employee = $this->addRolesToEmployee($employee);
+        $employee = $this->addAreaToEmployee($employee);
+        return $employee;
     }
 }
