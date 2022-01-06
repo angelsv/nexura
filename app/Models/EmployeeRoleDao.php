@@ -3,15 +3,9 @@
 declare(strict_types=1);
 namespace App\Models;
 
-class EmployeeRoleDao
+class EmployeeRoleDao extends GetConnection
 {
-    private $connection;
     private $table = 'empleado_rol';
-
-    function __construct()
-    {
-        $this->connection = Connection::getInstance()->getConnection();
-    }
 
     /**
      * Obtener todos los registros de un empleado

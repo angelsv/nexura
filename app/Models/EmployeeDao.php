@@ -6,15 +6,9 @@ namespace App\Models;
 use App\Models\AreaDao;
 use App\Models\EmployeeRoleDao;
 
-class EmployeeDao
+class EmployeeDao extends GetConnection
 {
-    private $connection;
     private $table = 'empleado';
-
-    function __construct()
-    {
-        $this->connection = Connection::getInstance()->getConnection();
-    }
 
     /**
      * Obtener todos los registros

@@ -3,15 +3,9 @@
 declare(strict_types=1);
 namespace App\Models;
 
-class AreaDao
+class AreaDao extends GetConnection
 {
-    private $connection;
     private $table = 'areas';
-
-    function __construct()
-    {
-        $this->connection = Connection::getInstance()->getConnection();
-    }
 
     /**
      * Obtener todos los registros
