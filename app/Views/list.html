@@ -12,46 +12,71 @@
 
 {% block content %}
 
-    <p>&nbsp;</p>
+    {% if response %}
+    <div class="alert alert-{% if response.response %}success{% else %}warning{% endif %}" role="alert">
+        {% if response.msg %}
+            {{ response.msg }}
+        {% endif %}
+        {% if response.errors %}
+        <ul>
+            {% for item in response.errors %}
+                <li>{{ item }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    {% endif %}
     
     <h1>Lista de empleados</h1>
 
-    <p>&nbsp;</p>
+    <div class="row">
+        <p>
+            <a href="/employee/new" class="btn btn-primary float-end"><i class="bi bi-person-plus-fill"></i> Crear</a>
+        </p>
+    </div>
 
     {% if employees|length > 0 %}
-    <div class="table-responsive">
-        <table id="table-employees" class="table table-hover table-striped">
-            <thead class="table-light">
-                <tr>
-                    <th><i class="bi bi-person-fill"></i> Nombre</th>
-                    <th>@ Email</th>
-                    <th><i class="bi bi-gender-ambiguous"></i> Sexo</th>
-                    <th><i class="bi bi-briefcase-fill"></i> Área</th>
-                    <th><i class="bi bi-envelope-fill"></i> Boletín</th>
-                    <th>Modificar</th>
-                    <th>Eliminar</th>
-                </tr>
-                <thead>
-                    <tbody>
-                        {% for employee in employees %}
-                        <tr>
-                            <td>{{ employee.nombre }}</td>
-                            <td>{{ employee.email }}</td>
-                            <td>{% if employee.sexo=='M' %}Masculino{% else %}Femenino{% endif %}</td>
-                            <td>{{ employee.area.nombre }}</td>
-                            <td>{% if employee.boletin=='1' %}Si{% else %}No{% endif %}</td>
-                            
-                            <td class="text-center"><a href="/employee/{{ employee.id }}"><i class="bi bi-pencil-square"></i></a></td>
-                            <td class="text-center"><a href="javascript:;" data-id="{{ employee.id }}"><i class="bi bi-trash-fill"></i></a></td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-        </table>
+    <div class="row">
+        <div class="table-responsive">
+            <table id="table-employees" class="table table-hover table-striped">
+                <thead class="table-light">
+                    <tr>
+                        <th><i class="bi bi-person-fill"></i> Nombre</th>
+                        <th>@ Email</th>
+                        <th><i class="bi bi-gender-ambiguous"></i> Sexo</th>
+                        <th><i class="bi bi-briefcase-fill"></i> Área</th>
+                        <th><i class="bi bi-envelope-fill"></i> Boletín</th>
+                        <th>Modificar</th>
+                        <th>Eliminar</th>
+                    </tr>
+                    <thead>
+                        <tbody>
+                            {% for employee in employees %}
+                            <tr id="row-{{ employee.id }}">
+                                <td>{{ employee.nombre }}</td>
+                                <td>{{ employee.email }}</td>
+                                <td>{% if employee.sexo=='M' %}Masculino{% else %}Femenino{% endif %}</td>
+                                <td>{{ employee.area.nombre }}</td>
+                                <td>{% if employee.boletin=='1' %}Si{% else %}No{% endif %}</td>
+                                
+                                <td class="text-center"><a href="/employee/{{ employee.id }}"><i class="bi bi-pencil-square"></i></a></td>
+                                <td class="text-center"><a href="javascript:;" data-id="{{ employee.id }}" class="a-delete"><i class="bi bi-trash-fill"></i></a></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        No hay registros. Puede iniciar <a href="/employee/new">creando uno aquí</a>
     </div>
     {% endif %}
 {% endblock %}
 
 {% block additional_js %}
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="/dist/js/list.js"></script>
     <!-- <script src="//cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
     <script>
         $(document).ready(function() {
