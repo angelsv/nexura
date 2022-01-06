@@ -8,6 +8,8 @@ use App\Models\RoleDao;
 use App\Models\Employee;
 use App\Models\EmployeeDao;
 use App\Models\EmployeeRoleDao;
+use Egulias\EmailValidator\EmailValidator;
+use Egulias\EmailValidator\Validation\RFCValidation;
 
 class EmployeeController extends Controller
 {
@@ -15,11 +17,13 @@ class EmployeeController extends Controller
     private $areas;
     private $roles;
     private $employeeDao;
+    private $validator;
 
     function __construct(){
         parent::__construct();
         $areaModel = new AreaDao;
         $roleModel = new RoleDao;
+        $this->validator = new EmailValidator();
         $this->employeeDao = new EmployeeDao;
         $this->areas = $areaModel->getAll();
         $this->roles = $roleModel->getAll();
@@ -83,6 +87,38 @@ class EmployeeController extends Controller
         $newsletter = isset($_POST['employee']['boletin']) ? $_POST['employee']['boletin'] : '0';
         $newsletter = filter_var(trim($newsletter), FILTER_SANITIZE_NUMBER_INT);
 
+        // Validación de campos
+        $errors = [];
+        if( empty($name) ){
+            $errors[] = 'El campo `nombre` es obligatorio';
+        }
+        if( empty($email) ){
+            $errors[] = 'El campo `email` es obligatorio';
+        }
+        if( !empty($email) && !$this->validator->isValid($email, new RFCValidation()) ){
+            $errors[] = 'El campo `email` debe tener un formato correcto';
+        }
+        if( empty($gender) || ($gender!=='M' && $gender!=='F') ){
+            $errors[] = 'El campo `sexo` es obligatorio';
+        }
+        if( empty($area) || !ctype_digit("{$area}") ){
+            $errors[] = 'El campo `área` es obligatorio';
+        }
+        if( empty($description) ){
+            $errors[] = 'El campo `descripción` es obligatorio';
+        }
+
+        if( count($errors) > 0 ){
+            $response = [
+                'response' => false,
+                'msg' => 'Se encontraron errores en el formulario, por favor valide e intente nuevamente:',
+                'errors' => $errors,
+            ];
+            $this->template->twig->display('form.html', ['employee' => $_POST['employee'] , 'response' => $response, 'areas' => $this->areas, 'roles' => $this->roles, 'action' => '/employee']);
+            return null;
+        }
+
+        // Procesar solicitud sin errores
         $employeeDto = new Employee;
         $employeeDto->setNombre($name);
         $employeeDto->setEmail($email);
