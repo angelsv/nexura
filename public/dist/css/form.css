@@ -1,0 +1,4 @@
+/* Personalización de la página del fomrulario */
+label.col-form-label, legend.col-form-label {
+    text-align: right;
+}
