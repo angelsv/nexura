@@ -9,6 +9,7 @@
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
+SET foreign_key_checks = 0;
 
 --
 -- Base de datos: `prueba_tecnica_dev`
@@ -136,3 +137,5 @@ ALTER TABLE `empleado`
 ALTER TABLE `empleado_rol`
   ADD CONSTRAINT `empleado_rol_ibfk_1` FOREIGN KEY (`empleado_id`) REFERENCES `empleado` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `empleado_rol_ibfk_2` FOREIGN KEY (`rol_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+SET foreign_key_checks = 1;
