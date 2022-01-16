@@ -35,7 +35,12 @@ class EmployeeController extends Controller
      */
     function showForm(){
         $_SESSION['csrf_token'] = bin2hex(random_bytes(35));
-        $this->template->twig->display('form.html', ['areas' => $this->areas, 'roles' => $this->roles, 'action' => '/employee', 'csrf_token' => $_SESSION['csrf_token']]);
+        $this->template->twig->display('form.html', [
+            'areas' => $this->areas, 
+            'roles' => $this->roles, 
+            'action' => '/employee', 
+            'csrf_token' => $_SESSION['csrf_token']
+        ]);
     }
 
     /**
@@ -108,10 +113,11 @@ class EmployeeController extends Controller
 
         $name = filter_var(trim($_POST['employee']['nombre']), FILTER_SANITIZE_STRING);
         $email = filter_var(trim($_POST['employee']['email']), FILTER_SANITIZE_EMAIL);
-        $gender = filter_var(trim($_POST['employee']['sexo']), FILTER_SANITIZE_STRING);
-        $area = filter_var(trim($_POST['employee']['area_id']), FILTER_SANITIZE_NUMBER_INT);
+        $gender = isset($_POST['employee']['sexo']) ? filter_var(trim($_POST['employee']['sexo']), FILTER_SANITIZE_STRING) : null;
+        $area = isset($_POST['employee']['area_id']) ? filter_var(trim($_POST['employee']['area_id']), FILTER_SANITIZE_NUMBER_INT) : null;
         $description = filter_var(trim($_POST['employee']['descripcion']), FILTER_SANITIZE_STRING);
-
+        $roles = $_POST['employee']['roles'] ?? null;
+        
         $newsletter = isset($_POST['employee']['boletin']) ? $_POST['employee']['boletin'] : '0';
         $newsletter = filter_var(trim($newsletter), FILTER_SANITIZE_NUMBER_INT);
 
@@ -139,6 +145,9 @@ class EmployeeController extends Controller
         }
         if( empty($description) ){
             $errors[] = 'El campo `descripción` es obligatorio';
+        }
+        if( empty($roles) ){
+            $errors[] = 'El campo `roles` es obligatorio (debe tener al menos una opción seleccionada)';
         }
 
         $_SESSION['csrf_token'] = bin2hex(random_bytes(35));
@@ -189,7 +198,6 @@ class EmployeeController extends Controller
 
         // Los roles sólo se gestionan cuando la creación/actualización fue exitosa
         if( $response['response'] ){
-            $roles = $_POST['employee']['roles'];
             $employeeRoleDao = new EmployeeRoleDao;
             $employee['roles'] = $employeeRoleDao->insertRolesByEmployeeId((int)$employee['id'], $roles);
         }
