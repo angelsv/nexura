@@ -15,9 +15,11 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     // Crear
     $r->addRoute('GET', '/employee/new', 'App\Controllers\EmployeeController/showForm');
     $r->addRoute('POST', '/employee', 'App\Controllers\EmployeeController/save');
+
     // Editar
     $r->addRoute('GET', '/employee/{id:\d+}', 'App\Controllers\EmployeeController/getById');
     $r->addRoute('POST', '/employee/{id:\d+}', 'App\Controllers\EmployeeController/save');
+    
     // Eliminar
     $r->addRoute('POST', '/employee/delete', 'App\Controllers\EmployeeController/delete');
 

@@ -13,9 +13,7 @@ $(document).ready(function() {
         errorClass: 'invalid-feedback',
         errorPlacement: function(error, element) {
             if(element.parent('.form-check').length) {
-                error.insertAfter(element.parent().parent());
-            // } else if (element.parent('.radio-inline').length) {
-            //     error.insertAfter(element.parent().parent());
+                element.parent().parent().append(error);
             } else {
                 error.insertAfter(element);
             }

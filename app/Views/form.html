@@ -14,8 +14,6 @@
 
 {% block content %} 
 
-    <p>&nbsp;</p>
-
     {% if response %}
         <div class="alert alert-{% if response.response %}success{% else %}warning{% endif %}" role="alert">
             {% if response.msg %}
@@ -124,8 +122,6 @@
         </div>
 
     </form>
-
-    <p>&nbsp;</p>
 
 {% endblock %}
 
